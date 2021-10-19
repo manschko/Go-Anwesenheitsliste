@@ -18,6 +18,7 @@ func ConfigFlag() {
 	flag.IntVar(&flags.TokenValidity, "valid", 5, "Gültigkeits dauer der Token")
 
 	flag.Parse()
+
 }
 
 
