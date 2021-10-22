@@ -32,7 +32,7 @@ func ConfigWebServer(){
 
 	// Setup für Anmeldeserver über go routine
 	go func() {
-		server := createServer("Login", flags.Port1)
+		server := CreateLoginPageServer("Login", flags.Port1)
 		fmt.Println( server.ListenAndServe())
 		wg.Done()
 	}()
@@ -62,6 +62,8 @@ func createServer(name string, port int)  *http.Server{
 
 	return &server
 }
+
+
 
 
 

@@ -3,6 +3,8 @@ package main
 import "testing"
 
 func TestFlags(t *testing.T){
+	//TODO os.agrs um flags zu setzen
+
 	if flags.Port2 != 8080 {
 		t.Errorf("flag for QR code Page expected 8080 got: %d", flags.Port2)
 	}
