@@ -1,0 +1,21 @@
+body {
+	font-family: sans-serif;
+	background-color: #eeeeee;
+	margin: 0;
+}
+
+#head {
+	text-align: center;
+	font-size: 50px;
+	border-bottom: solid #BA0025 5px;
+	height: 16vh;
+	line-height: 16vh;
+}
+
+#content {
+	padding: 10vh 25vw 0px 25vw;
+}
+
+#qr-code {
+	width: 100%;
+}
