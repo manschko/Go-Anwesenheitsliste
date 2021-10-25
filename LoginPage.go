@@ -17,6 +17,8 @@ type LoginData struct {
 	Message string
 }
 
+var loginData *LoginData = &LoginData{}
+
 func CreateLoginPageServer(name string, port int)  *http.Server{
 
 	mux := http.NewServeMux()
@@ -42,20 +44,24 @@ func CreateLoginPageServer(name string, port int)  *http.Server{
 	return &server
 }
 
+
 func renderTemplate(res http.ResponseWriter, req *http.Request) {
-	tmpl := template.Must(template.ParseFiles( "login.html"))
+	tmpl := template.Must(template.ParseFiles( ".\\PageTemplates\\login.html"))
 
 	if req.Method != http.MethodPost{
 		tmpl.Execute(res, nil)
 		return
 	}
 
+	loginData.Email = req.FormValue("email")
+	loginData.Subject = req.FormValue("subject")
+	loginData.Message = req.FormValue("message")
 	response := LoginData{
 		Email:   req.FormValue("email"),
 		Subject: req.FormValue("subject"),
 		Message: req.FormValue("message"),
 	}
-	fmt.Println("test")
+	//todo call Journal
 	fmt.Println(response)
 
 	tmpl.Execute(res, struct{ Success bool}{true})
