@@ -2,20 +2,7 @@
 <locations>
     <location>
         <name>Mosbach Gebäude A</name>
-        <token></token>
-        <qrcode></qrcode>
-        <page></page>
-    </location>
-    <location>
         <name>Mosbach Gebäude B</name>
-        <token></token>
-        <qrcode></qrcode>
-        <page></page>
-    </location>
-    <location>
         <name>Mosbach Gebäude E</name>
-        <token></token>
-        <qrcode></qrcode>
-        <page></page>
     </location>
 </locations>
