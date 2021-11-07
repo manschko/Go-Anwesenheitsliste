@@ -44,7 +44,7 @@ func TestWebServerAndFlags(t *testing.T) {
 		t.Errorf("flag for validation time of Tokens expected 80 got: %d", flags.TokenValidity)
 	}
 	ConfigWebServer()
-	resp, err := http.Get("http://localhost:" + strconv.Itoa(flags.Port2) + "/")
+	resp, err := http.Get("https://localhost:" + strconv.Itoa(flags.Port2) + "/")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func TestWebServerAndFlags(t *testing.T) {
 		t.Errorf("Webserver mit dem port "+strconv.Itoa(flags.Port2)+" konnte nicht erreicht werden status code: %d", resp.StatusCode)
 	}
 
-	resp, err = http.Get("http://localhost:" + strconv.Itoa(flags.Port1) + "/")
+	resp, err = http.Get("https://localhost:" + strconv.Itoa(flags.Port1) + "/")
 	if err != nil {
 		t.Fatal(err)
 	}
