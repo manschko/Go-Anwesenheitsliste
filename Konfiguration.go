@@ -31,14 +31,14 @@ func ConfigWebServer(){
 
 	// Setup für Anmeldeserver über go routine
 	go func() {
-		server := createServer("Login", flags.Port1)
+		server := CreateLoginPageServer("Login", flags.Port1)
 		fmt.Println(server.ListenAndServeTLS("cert.pem", "key.pem"))
 		wg.Done()
 	}()
 
 	// Setup für QRcode Seite über go routinetes
 	go func() {
-		server := createServer("QR", flags.Port2)
+		server := createQRWebServer("QR", flags.Port2)
 		fmt.Println(server.ListenAndServeTLS("cert.pem", "key.pem"))
 		wg.Done()
 	}()
@@ -56,7 +56,7 @@ func createServer(name string, port int)  *http.Server{
 	})*/
 
 	//Auswahl der HTML Seite je nach Port
-	// Sollte angepasst werden, habe es nur mit jeweils einer index.html
+	// Sollte angepasst werden, habe es nur mit jeweils einer qr.html
 	//geschafft, deshalb die verschiedenen Ordner
 	if (name == "Login") {
 		mux.Handle("/", http.FileServer(http.Dir("./static/login")))

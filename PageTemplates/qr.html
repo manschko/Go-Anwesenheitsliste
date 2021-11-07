@@ -1,0 +1,14 @@
+{{if .Success}}
+<h1>Thanks for your message!</h1>
+{{else}}
+<p>{{.Locations}}</p>
+<form method="POST">
+    <label>Locations:</label><br />
+    <select name="location" id="location">
+        {{range .Locations}}
+            <option value="{{.}}">{{.}}</option>
+        {{end}}
+    </select>
+    <input type="submit">
+</form>
+{{end}}

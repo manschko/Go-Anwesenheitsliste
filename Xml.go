@@ -6,4 +6,5 @@ type Locations struct {
 
 type Location struct {
 	Name string `xml:"name"`
+	Token string `xml:"token"`
 }
