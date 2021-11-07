@@ -12,9 +12,8 @@ type Page struct{
 }
 
 type LoginData struct {
-	Email   string
-	Subject string
-	Message string
+	Adresse   string
+	Name string
 }
 
 var loginData *LoginData = &LoginData{}
@@ -26,14 +25,6 @@ func CreateLoginPageServer(name string, port int)  *http.Server{
 	mux.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
 
 		renderTemplate(res, req)
-	})
-
-	mux.HandleFunc("/result", func( res http.ResponseWriter, req *http.Request) {
-		req.ParseForm()
-
-		for key, value := range req.Form {
-			fmt.Printf("%s = %s\n", key, value)
-		}
 	})
 
 	server := http.Server {
@@ -53,13 +44,11 @@ func renderTemplate(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	loginData.Email = req.FormValue("email")
-	loginData.Subject = req.FormValue("subject")
-	loginData.Message = req.FormValue("message")
+	loginData.Name = req.FormValue("name")
+	loginData.Adresse = req.FormValue("adresse")
 	response := LoginData{
-		Email:   req.FormValue("email"),
-		Subject: req.FormValue("subject"),
-		Message: req.FormValue("message"),
+		Name:   req.FormValue("name"),
+		Adresse: req.FormValue("adresse"),
 	}
 	//todo call Journal
 	fmt.Println(response)

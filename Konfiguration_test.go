@@ -3,25 +3,21 @@ package main
 import (
 	"flag"
 	"net/http"
-	"os"
 	"strconv"
 	"testing"
 )
 
 //Überschreibe Main test Funktion um Funktionen vor den tests auszuführen
-func TestMain(m *testing.M) {
+/*func TestMain(m *testing.M) {
 	setup()
 	os.Exit(m.Run())
-}
+}*/
 
-func setup() {
+
+
+
+func TestWebServerAndFlags(t *testing.T) {
 	ConfigFlag()
-
-}
-
-
-func TestFlags(t *testing.T){
-
 	//test for default Flags
 	if flags.Port2 != 8080 {
 		t.Errorf("flag for QR code Page expected 8080 got: %d", flags.Port2)
@@ -47,10 +43,6 @@ func TestFlags(t *testing.T){
 	if flags.TokenValidity != 80 {
 		t.Errorf("flag for validation time of Tokens expected 80 got: %d", flags.TokenValidity)
 	}
-
-}
-
-func TestConfigWebServer(t *testing.T) {
 	ConfigWebServer()
 	resp, err := http.Get("http://localhost:" + strconv.Itoa(flags.Port2) + "/")
 	if err != nil {
@@ -58,7 +50,7 @@ func TestConfigWebServer(t *testing.T) {
 	}
 
 	if resp.StatusCode != 200 {
-		t.Errorf("Webserver mit dem port " + strconv.Itoa(flags.Port2) + " konnte nicht erreicht werden status code: %d", resp.StatusCode)
+		t.Errorf("Webserver mit dem port "+strconv.Itoa(flags.Port2)+" konnte nicht erreicht werden status code: %d", resp.StatusCode)
 	}
 
 	resp, err = http.Get("http://localhost:" + strconv.Itoa(flags.Port1) + "/")
@@ -66,7 +58,9 @@ func TestConfigWebServer(t *testing.T) {
 		t.Fatal(err)
 	}
 	if resp.StatusCode != 200 {
-		t.Errorf("Webserver mit dem port " + strconv.Itoa(flags.Port1) + " konnte nicht erreicht werden status code: %d", resp.StatusCode)
+		t.Errorf("Webserver mit dem port "+strconv.Itoa(flags.Port1)+" konnte nicht erreicht werden status code: %d", resp.StatusCode)
+
 	}
-	wg.Done()
+
+
 }
