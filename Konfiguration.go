@@ -31,14 +31,14 @@ func ConfigWebServer(){
 
 	// Setup für Anmeldeserver über go routine
 	go func() {
-		server := CreateLoginPageServer("Login", flags.Port1)
+		server := CreateLoginPageServer(flags.Port1)
 		fmt.Println(server.ListenAndServeTLS("cert.pem", "key.pem"))
 		wg.Done()
 	}()
 
 	// Setup für QRcode Seite über go routinetes
 	go func() {
-		server := createQRWebServer("QR", flags.Port2)
+		server := createQRWebServer(flags.Port2)
 		fmt.Println(server.ListenAndServeTLS("cert.pem", "key.pem"))
 		wg.Done()
 	}()

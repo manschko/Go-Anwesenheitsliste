@@ -6,7 +6,12 @@ import (
 	"net/http"
 )
 
-func createQRWebServer(name string, port int)  *http.Server{
+type TemplateDataQR struct {
+	Locations []string
+	Success bool
+}
+
+func createQRWebServer(port int)  *http.Server{
 	mux := http.NewServeMux()
 
 	// Ursprüngliche Ausgabe Inhalt
@@ -14,7 +19,7 @@ func createQRWebServer(name string, port int)  *http.Server{
 		//data := TemplateData{[]string{"test","test2"}}
 		tmpl := template.Must(template.ParseFiles( ".\\PageTemplates\\qr.html"  ))
 		if req.Method != http.MethodPost{
-			tmpl.Execute(res, TemplateData{[]string{"test", "test2"},false})
+			tmpl.Execute(res, TemplateDataQR{[]string{"test", "test2"},false})
 			return
 		}
 		//Todo if form got send

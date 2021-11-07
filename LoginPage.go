@@ -16,28 +16,39 @@ type LoginData struct {
 	Name string
 }
 
-type TemplateData struct {
-	Locations []string
+type TemplateDataLogin struct {
+	Location string
+	Name string
+	Failed bool
 	Success bool
+
 }
 
 var loginData *LoginData = &LoginData{}
 
-func CreateLoginPageServer(name string, port int) *http.Server {
+func CreateLoginPageServer(port int) *http.Server {
 
-	//todo check if token exists if not panic hard
+
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
+		data := TemplateDataLogin{"", "", false, true}
+		//todo check if token exists if not panic hard
+		keys, ok := req.URL.Query()["key"]
+
+		if !ok || len(keys[0]) < 1 {
+			data.Failed = true
+		}
 		//todo fill TemplateData with Person data if key exists
-		data := TemplateData{nil, false}
+
 		tmpl := template.Must(template.ParseFiles( ".\\PageTemplates\\login.html"  ))
 		if req.Method != http.MethodPost{
 			tmpl.Execute(res, data)
 			return
 		}
 
-		//todo call Journal
+
 		req.ParseForm()
 		loginData.Name = req.FormValue("name")
 		loginData.Adresse = req.FormValue("adresse")
@@ -46,6 +57,8 @@ func CreateLoginPageServer(name string, port int) *http.Server {
 			Adresse: req.FormValue("adresse"),
 		}
 		if(response  != LoginData{}) {
+			//todo get location from keys and login status form list
+			WriteJournal(response.Name, "test", true)
 			data.Success = true
 			tmpl.Execute(res, data)
 			fmt.Println(response)
