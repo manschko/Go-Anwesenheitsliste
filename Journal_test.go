@@ -10,10 +10,10 @@ import (
 
 func TestWriteJournal(t *testing.T) {
 	WriteJournal("test", "testort", true)
-	file, err := os.OpenFile("Journal/" + time.Now().Format("01-02-2006"), os.O_RDONLY, 0660)
+	file, err := os.OpenFile("Journal/" + time.Now().Format("01-02-2006") + ".txt", os.O_RDONLY, 0660)
 
 	if err != nil {
-		t.Errorf("flag for QR code Page expected 8080 got: %d", flags.Port2)
+		t.Errorf("error beim öffnen der Datei: %d", err)
 	}
 
 	defer file.Close()
