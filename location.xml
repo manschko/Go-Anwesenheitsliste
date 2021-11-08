@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locations>
+  <test>bla</test>
+  <location>
+    <id>1</id>
+    <name>Mosbach</name>
+  </location>
+  <location>
+    <id>2</id>
+    <name>Bad Mergendheim</name>
+  </location>
+</locations>
