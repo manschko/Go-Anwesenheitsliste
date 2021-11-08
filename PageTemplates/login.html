@@ -1,3 +1,6 @@
+{{if .Failed}}
+<h1>Token is missing go back to get a new QR code</h1>
+{{else}}
 {{if .Success}}
 <h1>Thanks for your message!</h1>
 {{else}}
@@ -9,4 +12,5 @@
     <textarea name="adresse"></textarea><br />
     <input type="submit">
 </form>
+{{end}}
 {{end}}

@@ -17,9 +17,5 @@ func main() {
 	}
 
 	ConfigWebServer()
-<<<<<<< HEAD
-
-=======
 	wg.Wait()
->>>>>>> main
 }

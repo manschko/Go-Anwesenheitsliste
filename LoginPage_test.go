@@ -10,7 +10,7 @@ import (
 )
 
 func TestTemplate(t *testing.T) {
-	resp, err := http.Get("http://localhost:" + strconv.Itoa(flags.Port1) + "/")
+	resp, err := http.Get("https://localhost:" + strconv.Itoa(flags.Port1) + "/")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,7 +22,7 @@ func TestTemplate(t *testing.T) {
 	fmt.Println(string(body))
 }
 func TestForm(t *testing.T) {
-	_, err := http.PostForm("http://localhost:" + strconv.Itoa(flags.Port1) + "/", url.Values{"adresse": {"test"}, "name": {"name"}})
+	_, err := http.PostForm("https://localhost:" + strconv.Itoa(flags.Port1) + "/", url.Values{"adresse": {"test"}, "name": {"name"}})
 	if err != nil {
 		t.Fatal(err)
 	}
