@@ -6,11 +6,6 @@ import (
 	"net/http"
 )
 
-type Page struct{
-	Title string
-	Body []byte
-}
-
 type LoginData struct {
 	Adresse   string
 	Name string

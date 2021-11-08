@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/http"
 	"sync"
 )
 //Struct für das Speichern der Flags
@@ -44,31 +43,4 @@ func ConfigWebServer(){
 	}()
 
 
-}
-
-func createServer(name string, port int)  *http.Server{
-
-	mux := http.NewServeMux()
-
-	// Ursprüngliche Ausgabe Inhalt
-	/*mux.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
-		fmt.Fprint(res, "Hello: " + name)
-	})*/
-
-	//Auswahl der HTML Seite je nach Port
-	// Sollte angepasst werden, habe es nur mit jeweils einer qr.html
-	//geschafft, deshalb die verschiedenen Ordner
-	if (name == "Login") {
-		mux.Handle("/", http.FileServer(http.Dir("./static/login")))
-	}
-	if(name == "QR") {
-		mux.Handle("/", http.FileServer(http.Dir("./static/qr")))
-	}
-
-	server := http.Server {
-		Addr: fmt.Sprintf(":%v", port),
-		Handler: mux,
-	}
-
-	return &server
 }
