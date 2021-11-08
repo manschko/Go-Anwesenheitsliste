@@ -15,6 +15,7 @@ func main() {
 	for _, location := range locations {
 		fmt.Printf("Id: %4v Name: %v\n", location.Id, location.Name)
 	}
-	//ConfigWebServer()
+
+	ConfigWebServer()
 
 }
