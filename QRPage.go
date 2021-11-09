@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path/filepath"
 )
 
 type TemplateDataQR struct {
@@ -17,7 +18,8 @@ func createQRWebServer(port int)  *http.Server{
 	// Ursprüngliche Ausgabe Inhalt
 	mux.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
 		//data := TemplateData{[]string{"test","test2"}}
-		tmpl := template.Must(template.ParseFiles( ".\\PageTemplates\\qr.html"  ))
+		path := filepath.FromSlash("./PageTemplates/qr.html")
+		tmpl := template.Must(template.ParseFiles(path))
 		if req.Method != http.MethodPost{
 			tmpl.Execute(res, TemplateDataQR{[]string{"test", "test2"},false})
 			return
