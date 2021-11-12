@@ -16,6 +16,8 @@ func main() {
 		fmt.Printf("Id: %4v Name: %v\n", location.Id, location.Name)
 	}
 
+	creatAndRunTimer(flags.TokenValidity, locations)
+
 	ConfigWebServer()
 	wg.Wait()
 }

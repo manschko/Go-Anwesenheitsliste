@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<locations>
-  <test>bla</test>
+<Locations>
   <location>
     <id>1</id>
     <name>Mosbach</name>
+    <accesstoken>h5gk4161kjhg64534</accesstoken>
+    <CurrentToken>13120246840675548932</CurrentToken>
+    <OldToken>15917012343595252139</OldToken>
   </location>
   <location>
     <id>2</id>
     <name>Bad Mergendheim</name>
+    <accesstoken>fgj2565m4bv5132hg4</accesstoken>
+    <CurrentToken>6615572945431596479</CurrentToken>
+    <OldToken>2246950418300623876</OldToken>
   </location>
-</locations>
+</Locations>
