@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path/filepath"
 )
 
 type Page struct{
@@ -59,8 +60,8 @@ func LoginPageHandler( res http.ResponseWriter, req *http.Request) {
 	}
 	//fmt.Println(keys[0])
 	//todo fill TemplateData with Person data if key exists
-
-	tmpl := template.Must(template.ParseFiles( ".\\PageTemplates\\login.html"  ))
+	path := filepath.FromSlash("./PageTemplates/login.html")
+	tmpl := template.Must(template.ParseFiles(path))
 	if req.Method != http.MethodPost{
 		tmpl.Execute(res, templateDataLogin)
 		return
