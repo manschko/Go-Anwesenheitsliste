@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -13,9 +14,9 @@ type TemplateDataQR struct {
 }
 
 func createQRWebServer(port int)  *http.Server{
-	mux := http.NewServeMux()
+	m := mux.NewRouter()
 
-	mux.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
+	m.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
 		//data := TemplateData{[]string{"test","test2"}}
 		path := filepath.FromSlash("./PageTemplates/qr.html")
 		tmpl := template.Must(template.ParseFiles(path))
@@ -34,8 +35,10 @@ func createQRWebServer(port int)  *http.Server{
 	if check {
 		for _, location := range locations {
 
-			mux.HandleFunc("/" + location.Name, func( res http.ResponseWriter, req *http.Request) {
+			m.HandleFunc("/{location}", func( res http.ResponseWriter, req *http.Request) {
 				//data := TemplateData{[]string{"test","test2"}}
+				params := mux.Vars(req)
+				_ = params
 				path := filepath.FromSlash("./PageTemplates/qrSingle.html")
 				tmpl := template.Must(template.ParseFiles(path))
 
@@ -56,7 +59,7 @@ func createQRWebServer(port int)  *http.Server{
 
 	server := http.Server {
 		Addr: fmt.Sprintf(":%v", port),
-		Handler: mux,
+		Handler: m,
 	}
 
 	return &server
