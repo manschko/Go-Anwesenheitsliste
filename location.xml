@@ -2,15 +2,15 @@
   <location>
     <id>1</id>
     <name>Mosbach</name>
-    <accesstoken>h5gk4161kjhg64534</accesstoken>
-    <CurrentToken>13120246840675548932</CurrentToken>
-    <OldToken>15917012343595252139</OldToken>
+    <AccessToken>Mos</AccessToken>
+    <CurrentToken>8057393512511780665</CurrentToken>
+    <OldToken>8125754942898905241</OldToken>
   </location>
   <location>
     <id>2</id>
     <name>Bad Mergendheim</name>
-    <accesstoken>fgj2565m4bv5132hg4</accesstoken>
-    <CurrentToken>6615572945431596479</CurrentToken>
-    <OldToken>2246950418300623876</OldToken>
+    <AccessToken>BMerg</AccessToken>
+    <CurrentToken>8745394986899721529</CurrentToken>
+    <OldToken>8813756417286846105</OldToken>
   </location>
 </Locations>
