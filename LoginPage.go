@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"strconv"
 )
 
 type Page struct{
@@ -13,28 +14,26 @@ type Page struct{
 }
 
 type LoginData struct {
-	Adresse   string
-	Name string
+	Adresse string
+	Name    string
+	Login   bool
 }
 
 type TemplateDataLogin struct {
-	Location string
-	Name string
-	Key string
-	Failed bool
-	Success bool
-
+	LocationToken  string
+	Location       string
+	Adresse        string
+	Name           string
+	Failed         bool
+	Success        bool
 }
 
+var dataMap map[string] TemplateDataLogin  = make(map[string]TemplateDataLogin )
 var loginData *LoginData = &LoginData{}
-var templateDataLogin *TemplateDataLogin = &TemplateDataLogin{"","","",false,false}
+var templateDataLogin *TemplateDataLogin = &TemplateDataLogin{"", "","","",false,false}
 
 func CreateLoginPageServer(port int) *http.Server {
-
-
-
 	mux := http.NewServeMux()
-	fmt.Println("hit")
 	mux.HandleFunc("/", LoginPageHandler)
 
 	server := http.Server {
@@ -48,18 +47,19 @@ func CreateLoginPageServer(port int) *http.Server {
 func LoginPageHandler( res http.ResponseWriter, req *http.Request) {
 
 	templateDataLogin.Success = false
-	//todo check if token exists if not panic hard
-	keys, ok := req.URL.Query()["key"]
+	location := req.URL.Query().Get("location")
+	access := req.URL.Query().Get("access")
 
-	if !ok || len(keys[0]) < 1 {
+	if location == "" && access == "" {
 		templateDataLogin.Failed = true
 	}else {
 		templateDataLogin.Failed = false
-		fmt.Println(keys[0])
-		templateDataLogin.Key = keys[0]
+		templateDataLogin.Name = ""
+		templateDataLogin.Location = ""
+		templateDataLogin.LocationToken = ""
+		templateDataLogin.Adresse = ""
+		updateTokenList(access, location)
 	}
-	//fmt.Println(keys[0])
-	//todo fill TemplateData with Person data if key exists
 	path := filepath.FromSlash("./PageTemplates/login.html")
 	tmpl := template.Must(template.ParseFiles(path))
 	if req.Method != http.MethodPost{
@@ -71,16 +71,59 @@ func LoginPageHandler( res http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
 	loginData.Name = req.FormValue("name")
 	loginData.Adresse = req.FormValue("adresse")
-	response := LoginData{
-		Name:   req.FormValue("name"),
-		Adresse: req.FormValue("adresse"),
+
+	loginData.Login, _ = strconv.ParseBool(req.FormValue("submit"))
+	var response = LoginData{
+		Name:    loginData.Name,
+		Adresse: loginData.Adresse,
+		Login:   loginData.Login,
 	}
 	if(response  != LoginData{}) {
-		//todo get location from keys and login status form list
-		WriteJournal(response.Name, "test", true)
-		templateDataLogin.Success = true
+		templateDataLogin.Name = response.Name
+		templateDataLogin.Adresse = response.Adresse
+		if(templateDataLogin.Location != ""){
+			entry := []string{templateDataLogin.Location, templateDataLogin.Adresse, templateDataLogin.Name}
+			if loginData.Login {
+				entry = append(entry, "Angemeldet")
+			}else {
+				entry = append(entry,"Abgemeldet")
+			}
+			WriteJournal(entry)
+			templateDataLogin.Success = true
+		}else{
+			templateDataLogin.Failed = true
+		}
+		dataMap[access] = *templateDataLogin
+
+		if(!response.Login) {
+			delete(dataMap, access)
+		}
 		tmpl.Execute(res, templateDataLogin)
-		fmt.Println(response)
 	}
 
+}
+
+func updateTokenList(access string, location string) {
+
+	for key, value := range dataMap{
+		if !isTokenValid(value.LocationToken, key) {
+			delete(dataMap, access)
+		}
+	}
+
+	_, ok := dataMap[access]
+
+	if !ok {
+		locations, _:= ReadLocationList()
+		for i := range locations{
+			if locations[i].AccessToken == location {
+				templateDataLogin.Location 	= locations[i].Name
+			}
+		}
+		templateDataLogin.LocationToken = location
+		dataMap[access] = *templateDataLogin
+		return
+	}
+	*templateDataLogin = dataMap[access]
+	templateDataLogin.Success = false
 }

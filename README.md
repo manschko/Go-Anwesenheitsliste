@@ -27,4 +27,4 @@ Unter dem Feld **"Program arguments"** könne Flags einfach definiert werden
 |------------|------------------------------------|----------------|
 | -portQR    | port für die QR code Seite         | int (Ganzzahl) |
 | -portLogin | port für die An- und Abmelderseite | int (Ganzzahl) |
-| -valid     | Gültigkeits dauer der Token        | int (Ganzzahl) |
+| -valid     | Gültigkeits dauer der Token in Sekunden       | int (Ganzzahl) |
