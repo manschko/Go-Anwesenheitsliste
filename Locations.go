@@ -14,7 +14,7 @@ type Locations struct {
 type Location struct {
   Id int `xml:"id"`
   Name string `xml:"name"`
-  AccessToken string `xml:accesstoken`
+  AccessToken string `xml:"accesstoken"`
   CurrentToken string
   OldToken string
 }
@@ -50,6 +50,7 @@ func  WriteLocationListToFile(locations []Location) {
     return
   }
 
+  fmt.Print(string(xmlString), "\n\n")
   os.WriteFile("location.xml", []byte(xmlString), 755)
 }
 
