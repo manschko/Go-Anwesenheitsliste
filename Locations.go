@@ -50,7 +50,6 @@ func  WriteLocationListToFile(locations []Location) {
     return
   }
 
-  fmt.Print(string(xmlString), "\n\n")
   os.WriteFile("location.xml", []byte(xmlString), 755)
 }
 
