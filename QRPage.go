@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	qrcode "github.com/skip2/go-qrcode"
 	"html/template"
 	"net/http"
 	"path/filepath"
-	qrcode "github.com/skip2/go-qrcode"
 	"strconv"
 )
 
@@ -35,7 +35,7 @@ func createQRWebServer(port int)  *http.Server{
 
 	locations, check := ReadLocationList()
 	if check {
-
+		
 		m.HandleFunc("/{location}", func( res http.ResponseWriter, req *http.Request) {
 			//data := TemplateData{[]string{"test","test2"}}
 
@@ -43,7 +43,7 @@ func createQRWebServer(port int)  *http.Server{
 
 			for _, location := range locations {
 
-				if params["location"] == location.Name {
+				if location.AccessToken == params["location"] {
 
 					//TODO vergleiche ob params in locations, wenn nicht vorhanden startseite; return , wenn vorhanden ausführen
 					path := filepath.FromSlash("./PageTemplates/qrSingle.html")
@@ -51,11 +51,9 @@ func createQRWebServer(port int)  *http.Server{
 
 					fmt.Println(location.Name)
 
-					if req.Method != http.MethodPost {
-						executeQr(location)
-						tmpl.Execute(res, struct{ locationName string }{location.Name})
-						return
-					}
+					executeQr(location)
+					tmpl.Execute(res, struct{ LocationName string }{location.Name})
+					return
 
 					//Todo if form got send
 
@@ -69,7 +67,8 @@ func createQRWebServer(port int)  *http.Server{
 			}
 		})
 	}
-
+	fs := http.FileServer( http.Dir("./PageTemplates"))
+	m.PathPrefix("/{location}").Handler(http.StripPrefix("/PageTemplates", fs))
 	server := http.Server {
 		Addr: fmt.Sprintf(":%v", port),
 		Handler: m,
