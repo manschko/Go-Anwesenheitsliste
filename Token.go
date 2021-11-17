@@ -46,6 +46,7 @@ func runChangeTokenThread() {
     newLocation := Location {
       Id: location.Id,
       Name: location.Name,
+      AccessToken: location.AccessToken,
       CurrentToken: hash,
       OldToken: location.CurrentToken,
     }
