@@ -10,6 +10,7 @@ type Flags struct {
 	Port1 int
 	Port2 int
 	TokenValidity int
+	Url string
 }
 //var um global auf die Flags zugreifen zu können
 var flags *Flags = &Flags{}
@@ -17,8 +18,8 @@ var wg = new(sync.WaitGroup)
 func ConfigFlag() {
 	flag.IntVar(&flags.Port1, "portLogin", 8000, "HTTP Server port")
 	flag.IntVar(&flags.Port2, "portQR", 8080, "HTTP Server port")
-	flag.IntVar(&flags.TokenValidity, "valid", 1, "Gültigkeitsdauer der Token")
-
+	flag.IntVar(&flags.TokenValidity, "valid", 15, "Gültigkeitsdauer der Token")
+	flag.StringVar(&flags.Url, "url", "localhost", "URL für den Webserver")
 	flag.Parse()
 
 }
