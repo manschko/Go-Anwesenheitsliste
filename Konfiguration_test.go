@@ -28,43 +28,10 @@ func TestWebServerAndFlags(t *testing.T) {
 	if flags.Port1 != 8000 {
 		t.Errorf("flag for Login Page expected 8000 got: %d", flags.Port1)
 	}
-	if flags.TokenValidity != 5 {
-		t.Errorf("flag for validation time of Tokens expected 5 got: %d", flags.TokenValidity)
+	if flags.TokenValidity != 3600 {
+		t.Errorf("flag for validation time of Tokens expected 3600 got: %d", flags.TokenValidity)
 	}
-
-	/* todo cleanup
-	//test for setting Falgs
-	flag.Set("portLogin", "8001")
-	flag.Set("portQR", "8002")
-	flag.Set("valid", "80")
-
-	if flags.Port2 != 8002 {
-		t.Errorf("flag for QR code Page expected 8002 got: %d", flags.Port2)
+	if flags.Url != "localhost" {
+		t.Errorf("flag for URL expected localhost got: %s", flags.Url)
 	}
-	if flags.Port1 != 8001 {
-		t.Errorf("flag for Login Page expected 8001 got: %d", flags.Port1)
-	}
-	if flags.TokenValidity != 80 {
-		t.Errorf("flag for validation time of Tokens expected 80 got: %d", flags.TokenValidity)
-	}
-
-	resp, err := http.Get("https://localhost:" + strconv.Itoa(flags.Port2) + "/")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if resp.StatusCode != 200 {
-		t.Errorf("Webserver mit dem port "+strconv.Itoa(flags.Port2)+" konnte nicht erreicht werden status code: %d", resp.StatusCode)
-	}
-
-	resp, err = http.Get("https://localhost:" + strconv.Itoa(flags.Port1) + "/")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if resp.StatusCode != 200 {
-		t.Errorf("Webserver mit dem port "+strconv.Itoa(flags.Port1)+" konnte nicht erreicht werden status code: %d", resp.StatusCode)
-
-	}*/
-
-
 }
