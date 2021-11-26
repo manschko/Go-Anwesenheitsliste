@@ -19,13 +19,18 @@ func createQRWebServer(port int)  *http.Server{
 	m := mux.NewRouter()
 	locations, check := ReadLocationList()
 
+	// list of location names
+	var locationNameList []string
+	for _, location := range locations {
+		locationNameList = append(locationNameList, location.Name)
+	}
+
 	//show form with locations for selection
 	m.HandleFunc("/", func( res http.ResponseWriter, req *http.Request) {
 		path := filepath.FromSlash("./PageTemplates/qr.html")
 		tmpl := template.Must(template.ParseFiles(path))
 		if req.Method != http.MethodPost{
-			//TODO inhalt aus xml hinzufügen als auswahlmöglichkeiten
-			tmpl.Execute(res, TemplateDataQR{[]string{"Mosbach", "test2"},false})
+			tmpl.Execute(res, TemplateDataQR{locationNameList,false})
 			return
 		}
 		//TODO eventuell abfangen wenn falsches ausgewählt wird das nicht gibt
@@ -56,14 +61,11 @@ func createQRWebServer(port int)  *http.Server{
 					tmpl.Execute(res, struct{LocationName string
 											Valid int}{location.Name, flags.TokenValidity})
 					return
-
-					// if param is not in xml redirect back to selection page
-				} else {
-					http.Redirect(res, req, "/", http.StatusSeeOther)
-					return
 				}
-				return
 			}
+			// if param is not in xml redirect back to selection page
+			http.Redirect(res, req, "/", http.StatusSeeOther)
+			return
 		})
 	}
 	//fileserver for gr code single page
