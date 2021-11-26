@@ -10,8 +10,10 @@ import (
 )
 
 func TestToken(t *testing.T) {
+	locations, _ := ReadLocationList()
 	res := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "https://localhost:" + strconv.Itoa(flags.Port1) + "/", nil)
+	//test für error handling bei keinem übergebenen Token
+	req, err := http.NewRequest("GET", "https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "/", nil)
 	LoginPageHandler(res, req)
 
 	if err != nil{
@@ -20,26 +22,29 @@ func TestToken(t *testing.T) {
 	if !templateDataLogin.Failed {
 		t.Errorf("Token ist vorhanden wurde aber nicht übergeben")
 	}
-	//todo key anpassen
-	req, err = http.NewRequest("GET","https://localhost:" + strconv.Itoa(flags.Port1) + "/?access=test", nil)
+	//test ob Tokens übetragen und erkannt wurden
+	req, err = http.NewRequest("GET","https://" + flags.Url + "" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, nil)
 	LoginPageHandler(res, req)
 	if err != nil{
 		t.Fatal(err)
 	}
-	/*if templateDataLogin. {
-		t.Errorf("Falscher Token wurde erfasst. Erwatet: test, bekommen: %s", templateDataLogin.Key )
-	}*/
+	if templateDataLogin.Failed {
+		t.Errorf("Es konnten keine Token gefunden werden")
+	}
+
+
 }
 func TestForm(t *testing.T) {
+	locations, _ := ReadLocationList()
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
-	_, err := client.Get("https://localhost:" + strconv.Itoa(flags.Port1) + "/")
+	_, err := client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = client.PostForm("https://localhost:" + strconv.Itoa(flags.Port1) + "/", url.Values{"adresse": {"test"}, "name": {"name"}})
+	_, err = client.PostForm("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit":{"true"}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,6 +53,37 @@ func TestForm(t *testing.T) {
 	}
 	if loginData.Adresse != "test" {
 		t.Errorf("Fehler bei dem übertragen von Formdaten erwartet \"test\" für die Adresse, übertragen: %s", loginData.Adresse)
+	}
+	//check ob from Daten gespeichert wurden
+	_, err = client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if templateDataLogin.Adresse != "test" || templateDataLogin.Name != "name" {
+		t.Errorf("Daten konten nicht von der Map wieder hergestellt werden")
+	}
+	//check ob Mapeintrag gelöscht wird wenn Token ungültig
+	runChangeTokenThread()
+	runChangeTokenThread()
+	_, err = client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if templateDataLogin.Adresse != "" || templateDataLogin.Name != "" {
+		t.Errorf("Daten wurden mit Ungültikem Token wiederhergestellt")
+	}
+	//check ob Mapeintrag gelöscht wrid wenn Abgemeldet
+	locations, _ = ReadLocationList()
+	_, err = client.PostForm("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit":{"true"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = client.PostForm("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit":{"false"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(dataMap) != 0 {
+		t.Errorf("Eintrag wurde nicht aus der Map gelöscht nach dem Abmelden")
 	}
 }
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-  "time"
   "hash/fnv"
   "strconv"
+  "time"
 )
 
 func creatAndRunTimer(interval int, locations []Location) {
@@ -35,7 +35,7 @@ func runChangeTokenThread() {
     var tokenStringToHash string
     timeStamp := time.Now()
     tokenStringToHash = location.Name
-    tokenStringToHash = tokenStringToHash + string(location.Id)
+    tokenStringToHash = tokenStringToHash + string(rune(location.Id))
     tokenStringToHash = tokenStringToHash + timeStamp.String()
 
     hasher := fnv.New64a()

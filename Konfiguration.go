@@ -18,7 +18,7 @@ var wg = new(sync.WaitGroup)
 func ConfigFlag() {
 	flag.IntVar(&flags.Port1, "portLogin", 8000, "HTTP Server port")
 	flag.IntVar(&flags.Port2, "portQR", 8080, "HTTP Server port")
-	flag.IntVar(&flags.TokenValidity, "valid", 15, "Gültigkeitsdauer der Token")
+	flag.IntVar(&flags.TokenValidity, "valid", 3600, "Gültigkeitsdauer der Token")
 	flag.StringVar(&flags.Url, "url", "localhost", "URL für den Webserver")
 	flag.Parse()
 

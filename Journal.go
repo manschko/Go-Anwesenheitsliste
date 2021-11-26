@@ -1,16 +1,15 @@
 package main
 
 import (
-	"log"
 	"os"
 	"time"
 )
 
-func WriteJournal(journal []string) {
+func WriteJournal(journal []string) error{
 	//Wenn Datei nich existiert Errstelle Diese oder hänge neuen Inhalt an
 	file, err := os.OpenFile("Journal/" + time.Now().Format("01-02-2006") + ".txt", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	entry := ""
 	for i, s := range journal{
@@ -21,9 +20,10 @@ func WriteJournal(journal []string) {
 	}
 	if _, err:= file.Write([]byte(entry + "\n" )); err != nil {
 		file.Close()
-		log.Fatal(err)
+		return err
 	}
 	if err := file.Close(); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
