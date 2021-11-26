@@ -78,5 +78,5 @@ func createQRWebServer(port int)  *http.Server{
 //generate qr code as png and save it in PageTemplates
 func executeQr(location Location) {
 
-	qrcode.WriteFile("https://localhost:" + strconv.Itoa(flags.Port1) + "/?location=" + location.AccessToken + "&access=" + location.CurrentToken, qrcode.Medium, 256, "PageTemplates/qr.png")
+	qrcode.WriteFile("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "/?location=" + location.AccessToken + "&access=" + location.CurrentToken, qrcode.Medium, 256, "PageTemplates/qr.png")
 }
