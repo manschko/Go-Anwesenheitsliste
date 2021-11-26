@@ -53,7 +53,8 @@ func createQRWebServer(port int)  *http.Server{
 					tmpl := template.Must(template.ParseFiles(path))
 					//generate qr code
 					executeQr(location)
-					tmpl.Execute(res, struct{LocationName string}{location.Name})
+					tmpl.Execute(res, struct{LocationName string
+											Valid int}{location.Name, flags.TokenValidity})
 					return
 
 					// if param is not in xml redirect back to selection page
