@@ -61,14 +61,11 @@ func createQRWebServer(port int)  *http.Server{
 					tmpl.Execute(res, struct{LocationName string
 											Valid int}{location.Name, flags.TokenValidity})
 					return
-
-					// if param is not in xml redirect back to selection page
-				} else {
-					http.Redirect(res, req, "/", http.StatusSeeOther)
-					return
 				}
-				return
 			}
+			// if param is not in xml redirect back to selection page
+			http.Redirect(res, req, "/", http.StatusSeeOther)
+			return
 		})
 	}
 	//fileserver for gr code single page
