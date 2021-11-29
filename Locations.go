@@ -4,7 +4,6 @@ import (
   "encoding/xml"
   "io/ioutil"
   "os"
-  "fmt"
 )
 
 type Locations struct {
@@ -53,6 +52,3 @@ func  WriteLocationListToFile(locations []Location) {
   os.WriteFile("location.xml", []byte(xmlString), 755)
 }
 
-func printLocation(location Location) {
-  fmt.Printf("\nId:%v\nName:%v\nCurrent token:%v\nOld token:%v", location.Id, location.Name, location.CurrentToken, location.OldToken)
-}
