@@ -86,21 +86,3 @@ func TestForm(t *testing.T) {
 		t.Errorf("Eintrag wurde nicht aus der Map gelöscht nach dem Abmelden")
 	}
 }
-
-
-/*TODO
-func TestTemplate(t *testing.T) {
-	resp, err := http.Get("https://localhost:" + strconv.Itoa(flags.Port1) + "/")
-	if err != nil {
-		t.Fatal(err)
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	//TODO compare body with template
-	fmt.Println(string(body))
-}
-
-
- */
