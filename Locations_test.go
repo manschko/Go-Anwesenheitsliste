@@ -4,7 +4,9 @@ import (
   "testing"
 )
 
+// Test WriteLocationListToFile
 func TestWriteLocationListToFile(t *testing.T) {
+  // Create parameter of function WriteLocationListToFile
   var mosbach Location
   mosbach.Id = 1
   mosbach.Name = "Mosbach"
@@ -23,20 +25,26 @@ func TestWriteLocationListToFile(t *testing.T) {
   locations = append(locations, mosbach)
   locations = append(locations, badMergendheim)
 
+  // Write location list to file
   result := WriteLocationListToFile(locations)
 
+  // Validate result
   if result == false {
     t.Error(result)
   }
 }
 
+// Test ReadLocationList
 func TestReadLocationList(t *testing.T) {
+  // Read locations
   locations, result := ReadLocationList()
 
+  // Validate locations
   if locations == nil {
     t.Error(locations)
   }
 
+  // Validate result
   if result == false {
     t.Error(result)
   }

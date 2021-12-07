@@ -3,14 +3,14 @@
     <id>1</id>
     <name>Mosbach</name>
     <accesstoken>rg</accesstoken>
-    <CurrentToken>16192001216107769614</CurrentToken>
-    <OldToken>12879960405315080572</OldToken>
+    <CurrentToken>3890372420546292004</CurrentToken>
+    <OldToken>25669930129342924</OldToken>
   </location>
   <location>
     <id>2</id>
     <name>Bad Mergendheim</name>
     <accesstoken>erg</accesstoken>
-    <CurrentToken>17102041800185894761</CurrentToken>
-    <OldToken>18171632137843045372</OldToken>
+    <CurrentToken>11505544865499498832</CurrentToken>
+    <OldToken>17337374235514595919</OldToken>
   </location>
 </Locations>
