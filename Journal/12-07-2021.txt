@@ -30,3 +30,7 @@ testort;testadresse;testname;AnmeldungOAbmeldung;
 Mosbach;test;name;Angemeldet;
 Mosbach;test;name;Angemeldet;
 Mosbach;test;name;Abgemeldet;
+testort;testadresse;testname;AnmeldungOAbmeldung;
+Mosbach;test;name;Angemeldet;
+Mosbach;test;name;Angemeldet;
+Mosbach;test;name;Abgemeldet;
