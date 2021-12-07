@@ -44,7 +44,7 @@ func ReadLocationList() ([]Location, bool) {
 }
 
 // This function writes the location configuration into a XML file
-func  WriteLocationListToFile(locations []Location) {
+func  WriteLocationListToFile(locations []Location) bool {
   // Load a list of Location objects into a Locations object
   var location Locations
   location.Locations = locations
@@ -52,9 +52,11 @@ func  WriteLocationListToFile(locations []Location) {
   // Convert object into string
   xmlString, err := xml.MarshalIndent(location, "", "  ")
   if err != nil {
-    return
+    return false
   }
 
   // Write string into file
   os.WriteFile("location.xml", []byte(xmlString), 755)
+
+  return true
 }

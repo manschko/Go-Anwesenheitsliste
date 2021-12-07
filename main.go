@@ -8,7 +8,7 @@ func main() {
 		return
 	}
 
-	creatAndRunTimer(flags.TokenValidity, locations)
+	CreateAndRunTimer(flags.TokenValidity, locations)
 
 	ConfigWebServer()
 	wg.Wait()

@@ -63,8 +63,8 @@ func TestForm(t *testing.T) {
 		t.Errorf("Daten konten nicht von der Map wieder hergestellt werden")
 	}
 	//check ob Mapeintrag gelöscht wird wenn Token ungültig
-	runChangeTokenThread()
-	runChangeTokenThread()
+	RunChangeTokenThread()
+	RunChangeTokenThread()
 	_, err = client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
 	if err != nil {
 		t.Fatal(err)

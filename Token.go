@@ -7,7 +7,7 @@ import (
 )
 
 // This function start a ticker thread, which change the time token in a definite interval
-func creatAndRunTimer(interval int, locations []Location) {
+func CreateAndRunTimer(interval int, locations []Location) bool {
   // Create ticker
   ticker := time.NewTicker(time.Duration(interval) * time.Second)
 
@@ -18,7 +18,7 @@ func creatAndRunTimer(interval int, locations []Location) {
       select {
       case <- ticker.C:
             // Run function to change the time token
-            runChangeTokenThread()
+            RunChangeTokenThread()
 
         case <- quit:
             ticker.Stop()
@@ -26,14 +26,16 @@ func creatAndRunTimer(interval int, locations []Location) {
         }
       }
   }()
+
+  return true
 }
 
 // This function change the time token of each location
-func runChangeTokenThread() {
+func RunChangeTokenThread() bool {
   // Get the locations
   locations, result := ReadLocationList()
   if !result {
-    return
+    return false
   }
 
   var newList []Location
@@ -67,10 +69,12 @@ func runChangeTokenThread() {
 
   // Write locations with new tokens into XML file
   WriteLocationListToFile(newList)
+
+  return true
 }
 
 // This function validate with time and access token.
-func isTokenValid(accessToken string, timeToken string) (bool){
+func IsTokenValid(accessToken string, timeToken string) (bool){
   // Reading configuration file
   locations, result := ReadLocationList()
   if !result {

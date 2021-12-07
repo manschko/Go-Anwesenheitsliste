@@ -101,11 +101,11 @@ func LoginPageHandler(res http.ResponseWriter, req *http.Request) {
 func updateTokenList(access string, location string) {
 
 	for key, value := range dataMap {
-		if !isTokenValid(value.LocationToken, key) {
+		if !IsTokenValid(value.LocationToken, key) {
 			delete(dataMap, key)
 		}
 	}
-	if isTokenValid(location, access) {
+	if IsTokenValid(location, access) {
 		_, ok := dataMap[access]
 
 		if !ok {
