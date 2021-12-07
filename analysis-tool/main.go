@@ -60,13 +60,12 @@ func PrintHelp() {
 }
 
 // This function list all days, which have a log file
-func ListDays() {
+func ListDays() bool {
 
   // List all files in the journal directory
-  files, err := ioutil.ReadDir("Journal/")
-
+  files, err := ioutil.ReadDir("./Journal/")
   if (err != nil) {
-    return
+    return false
   }
 
   // Use a regex expression to get
@@ -85,12 +84,18 @@ func ListDays() {
   }
 
   fmt.Print("\n")
+
+  return true
 }
 
 // This function find login data from a person in a specific day
-func SearchPerson(parameter []string) {
+func SearchPerson(parameter []string) bool {
   // Get content of a journal
   content := GetFileContent(parameter[1])
+  if content == "no result" {
+    return false
+  }
+
   rows := strings.Split(content, "\n")
   var places []string
 
@@ -115,10 +120,12 @@ func SearchPerson(parameter []string) {
       fmt.Print("\t- " + fields[1] + "\n")
     }
   }
+
+  return true
 }
 
 // This function export a attandance list of location into a CSV file
-func ExportList(parameter []string) {
+func ExportList(parameter []string) bool {
 
   // Get content of a file
   content := GetFileContent(parameter[1])
@@ -129,7 +136,7 @@ func ExportList(parameter []string) {
   // Create file
   file, err := os.Create(parameter[1] + "-" + parameter[0] + "-export.csv")
   if err != nil {
-    return
+    return false
   }
 
   // Create new file writer
@@ -174,6 +181,8 @@ func ExportList(parameter []string) {
     parameter[0] +
     "-export.csv" +
     " exportiert\n")
+
+  return true
 }
 
 func main() {
