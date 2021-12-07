@@ -18,37 +18,43 @@ type Location struct {
   OldToken string
 }
 
-// Mit dieser Funktion bekommt man den Inhalt von location.xml als Objekt
-// und kann den Zugnag Token und den aktuellen und vorherigen Zeit Token auslesen
+// This function read a XML file, which contains many locations
+// Each location contains the name, the access token the current token and an old token
 func ReadLocationList() ([]Location, bool) {
+  // Open file
   xmlFile, err := os.Open("location.xml")
   if err != nil {
     return nil, false
   }
 
+  // Reading file
   byteValue, err := ioutil.ReadAll(xmlFile)
   if err != nil {
     return nil, false
   }
 
+  // Close file
   defer xmlFile.Close()
 
+  // Load file content into Locations object
   var locations Locations
   xml.Unmarshal(byteValue, &locations)
 
   return locations.Locations, true
 }
 
-// Diese Funktion schreibt die geänderten Werte zurück in die Datei location.xml
+// This function writes the location configuration into a XML file
 func  WriteLocationListToFile(locations []Location) {
+  // Load a list of Location objects into a Locations object
   var location Locations
   location.Locations = locations
 
+  // Convert object into string
   xmlString, err := xml.MarshalIndent(location, "", "  ")
   if err != nil {
     return
   }
 
+  // Write string into file
   os.WriteFile("location.xml", []byte(xmlString), 755)
 }
-

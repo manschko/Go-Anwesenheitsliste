@@ -6,13 +6,18 @@ import (
   "time"
 )
 
+// This function start a ticker thread, which change the time token in a definite interval
 func creatAndRunTimer(interval int, locations []Location) {
+  // Create ticker
   ticker := time.NewTicker(time.Duration(interval) * time.Second)
+
+  // Start ticker
   quit := make(chan struct{})
   go func() {
     for {
       select {
       case <- ticker.C:
+            // Run function to change the time token
             runChangeTokenThread()
 
         case <- quit:
@@ -23,7 +28,9 @@ func creatAndRunTimer(interval int, locations []Location) {
   }()
 }
 
+// This function change the time token of each location
 func runChangeTokenThread() {
+  // Get the locations
   locations, result := ReadLocationList()
   if !result {
     return
@@ -31,7 +38,9 @@ func runChangeTokenThread() {
 
   var newList []Location
 
+  // Iterate throw all locations
   for _, location := range(locations) {
+    // Create new token
     var tokenStringToHash string
     timeStamp := time.Now()
     tokenStringToHash = location.Name
@@ -43,6 +52,7 @@ func runChangeTokenThread() {
 
     hash := strconv.FormatUint(hasher.Sum64(), 10)
 
+    // Set new token into location
     newLocation := Location {
       Id: location.Id,
       Name: location.Name,
@@ -51,21 +61,25 @@ func runChangeTokenThread() {
       OldToken: location.CurrentToken,
     }
 
+    // Add modified location into list
     newList = append(newList, newLocation)
   }
 
+  // Write locations with new tokens into XML file
   WriteLocationListToFile(newList)
 }
 
-// Mit dieser Funktion kann geprüft werden ob der Zeit Token in Kombination mit
-// dem Zugang Token gültig ist
+// This function validate with time and access token.
 func isTokenValid(accessToken string, timeToken string) (bool){
+  // Reading configuration file
   locations, result := ReadLocationList()
   if !result {
     return false
   }
 
+  // Iterating throw all locations
   for _, location := range(locations) {
+    // Checking time and access token
     if location.AccessToken == accessToken && (location.CurrentToken == timeToken || location.OldToken == timeToken) {
       return true
     }
