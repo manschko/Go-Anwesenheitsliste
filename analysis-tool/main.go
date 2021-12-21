@@ -184,6 +184,48 @@ func ExportList(parameter []string) bool {
 	return true
 }
 
+func ExecSelectDay(selectedDay string, parameter []string) bool {
+	if len(parameter) != 1 {
+		PrintHelp()
+		return false
+	}
+	selectedDay = parameter[0]
+	fmt.Print("Der " + parameter[0] + " wurde ausgewählt\n")
+	return true
+}
+
+func ExecSearchPerson(selectedDay string, parameter []string) bool {
+	if len(parameter) != 2 {
+		PrintHelp()
+		return false
+	}
+
+	name := parameter[0] + " " + parameter[1]
+	parameter = []string{name, selectedDay}
+	SearchPerson(parameter)
+
+	return true
+}
+
+func ExecExportList(selectedDay string, parameter []string) bool {
+	if len(parameter) == 0 {
+		PrintHelp()
+		return false
+	}
+
+	place := ""
+	for i, part := range parameter {
+		place += part
+		if i < len(parameter)-1 {
+			place += " "
+		}
+	}
+
+	parameter = []string{place, selectedDay}
+	ExportList(parameter)
+	return true
+}
+
 func main() {
 
 	fmt.Print("\n### Go Anwesenheitsliste - Analyse Tool - begin ###\n\n")
@@ -206,12 +248,7 @@ func main() {
 		switch cmd {
 		// Select a day
 		case "select-day":
-			if len(parameter) != 1 {
-				PrintHelp()
-				break
-			}
-			selectedDay = parameter[0]
-			fmt.Print("Der " + parameter[0] + " wurde ausgewählt\n")
+			ExecSelectDay(selectedDay, parameter)
 			break
 
 		// List all days in the journal directory
@@ -221,33 +258,12 @@ func main() {
 
 		// Search a person in a log file
 		case "search-person":
-			if len(parameter) != 2 {
-				PrintHelp()
-				break
-			}
-
-			name := parameter[0] + " " + parameter[1]
-			parameter := []string{name, selectedDay}
-			SearchPerson(parameter)
+			ExecSearchPerson(selectedDay, parameter)
 			break
 
 		// Export the attandance list into a file
 		case "export-list":
-			if len(parameter) == 0 {
-				PrintHelp()
-				break
-			}
 
-			place := ""
-			for i, part := range parameter {
-				place += part
-				if i < len(parameter)-1 {
-					place += " "
-				}
-			}
-
-			parameter := []string{place, selectedDay}
-			ExportList(parameter)
 			break
 
 		// Stop the analyse program

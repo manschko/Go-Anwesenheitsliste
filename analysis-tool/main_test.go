@@ -75,3 +75,40 @@ func TestExportList(t *testing.T) {
 		t.Error("Find content but no user login or logout on this day")
 	}
 }
+
+func TestExecSelectDay(t *testing.T) {
+	var parameter []string
+	parameter = append(parameter, "12-07-2021")
+	var selecteDay string
+	result := ExecSelectDay(selecteDay, parameter)
+
+	if result == false {
+		t.Error("Parameter contains no day")
+	}
+}
+
+func TestExecSearchPerson(t *testing.T) {
+	selectedDay := "12-07-2021"
+	var parameter []string
+	parameter = append(parameter, "name")
+	parameter = append(parameter, "12-07.2021")
+	result := ExecSearchPerson(selectedDay, parameter)
+	if result == false {
+		t.Error("Not defined number of parameter")
+	}
+}
+
+func TestExecExportList(t *testing.T) {
+	selectedDay := "12-07-2021"
+	var parameter []string
+	parameter = append(parameter, selectedDay)
+	parameter = append(parameter, "Mosbach")
+
+	if !ExecExportList(selectedDay, parameter) {
+		t.Error("Execution fails")
+	}
+}
+
+func TestMain(m *testing.M) {
+	os.Exit(m.Run())
+}
