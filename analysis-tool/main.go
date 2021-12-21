@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // This function read the input of stdin
@@ -42,15 +44,18 @@ func GetFileContent(day string) string {
 }
 
 // This function print a help into a terminal
+
 func PrintHelp() bool {
 	fmt.Print("help\t\t\t\tZeigt diese Hilfe an\n")
 	fmt.Print("\tselect-day 21-12-2012\t\tWählt ein Datum für weitere Befehle aus\n")
 	fmt.Print("\tsearch-person max.mustermann\tSucht die Orte an dem sich eine Person am Tag aufgehalten hat\n")
+  fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
 	fmt.Print("\tlist-days\t\t\tZeigt die Tage an, an denen eine Anwesenheit protokolliert wurde\n")
 	fmt.Print("\texport-list Ort\t\t\tExportiert die Anwesenheitsliste für einen Ort in eine CSV-Datei\n")
 	fmt.Print("\texit\t\t\t\tBeendet dieses Programm")
 
 	fmt.Print("\n")
+
 	return true
 }
 
@@ -119,7 +124,6 @@ func SearchPerson(parameter []string) bool {
 	if len(places) == 0 {
 		return false
 	}
-
 	return true
 }
 
@@ -184,6 +188,91 @@ func ExportList(parameter []string) bool {
 	return true
 }
 
+func SearchContact(name string) {
+	isCheckedIn := false
+	currentVisitors := make(map[string]map[string]time.Time)
+	contact := make(map[string]time.Duration)
+	suspect := struct {
+		n     string
+		location string
+	}{ name, "" }
+		files, err := ioutil.ReadDir("Journal")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		content := GetFileContent(file.Name())
+		rows := strings.Split(content, "\n")
+
+		for _, row := range rows {
+			c := strings.Split(row, ";")
+
+			if c[2] == suspect.n{
+				if c[3] == "Anmeldung" {
+					suspect.location = c[0]
+					isCheckedIn = true
+				}else {
+					isCheckedIn = false
+				}
+			}
+
+			if _, ok := currentVisitors[c[0]]; !ok {
+				currentVisitors[c[0]] = make(map[string]time.Time)
+			}
+			if _, ok := currentVisitors[c[0]][c[2]]; !ok {
+
+				t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+				currentVisitors[c[0]][c[2]] = t
+			}else if c[3] == "Abmeldung"{
+				if  suspect.n != c[2] && isCheckedIn && suspect.location == c[0]{
+					//check if person checked in after suspect
+					if currentVisitors[c[0]][suspect.n].After(currentVisitors[c[0]][c[2]]) {
+						//person checkin time - checkoutime
+						if _, ok := contact[c[2]]; !ok {
+							t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+							contact[c[2]] = t.Sub(currentVisitors[c[0]][c[2]])
+						} else {
+							t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+							contact[c[2]] += t.Sub(currentVisitors[c[0]][c[2]])
+						}
+					//if Person checked in before suspect
+					//Person checkouttime - suspect checkintime
+					}else {
+						t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+						contact[c[2]] = currentVisitors[c[0]][name].Sub(t)
+					}
+				}else if suspect.n == c[2] {
+					for key, value := range currentVisitors[c[0]]{
+						if key != c[2] {
+							//check if visitor checked in after suspect
+							if currentVisitors[c[0]][key].After(currentVisitors[c[0]][c[2]]) {
+								t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+								if _, ok := contact[key]; !ok {
+									contact[key] = t.Sub(value)
+								} else {
+									contact[key] += t.Sub(value)
+								}
+							} else {
+								t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+								if _, ok := contact[key]; !ok {
+									contact[key] = t.Sub(currentVisitors[c[0]][c[2]])
+								} else {
+									contact[key] += t.Sub(currentVisitors[c[0]][c[2]])
+								}
+							}
+						}
+					}
+				}
+				delete(currentVisitors[c[0]],c[2] )
+			}
+		}
+		fmt.Println("\nKontakt dauer zu verdächtigen "+ suspect.n)
+		for key, value := range contact {
+			fmt.Println(key + ": " + value.String())
+		}
+	}
+  
 func ExecSelectDay(selectedDay string, parameter []string) bool {
 	if len(parameter) != 1 {
 		PrintHelp()
@@ -237,6 +326,7 @@ func main() {
 	for runCondition {
 
 		// Read stdin
+
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("-> ")
 
@@ -264,8 +354,48 @@ func main() {
 		// Export the attandance list into a file
 		case "export-list":
 
+      //TODO implement
+			if len(parameter) == 0 {
+				PrintHelp()
+				break
+			}
+
+			place := ""
+			for i, part := range parameter {
+				place += part
+				if i < len(parameter)-1 {
+					place += " "
+				}
+			}
+
+			parameter := []string{place, selectedDay}
+			ExportList(parameter)
 			break
 
+		//Export contact list
+		case "contact-list":
+			if len(parameter) != 2 {
+				PrintHelp()
+				break
+			}
+    
+			name := parameter[0] + " " + parameter[1]
+			SearchContact(name)
+			break
+      
+    //Export contact list
+		case "contact-list":
+			if len(parameter) != 2 {
+				PrintHelp()
+				break
+			}
+
+			name := parameter[0] + " " + parameter[1]
+			SearchContact(name)
+			break
+
+  
+      
 		// Stop the analyse program
 		case "exit":
 			fmt.Print("\tDas Programm wird beendet\n")
@@ -280,3 +410,5 @@ func main() {
 
 	fmt.Print("### Go Anwesenheitsliste - Analyse Tool - end ###\n\n")
 }
+
+

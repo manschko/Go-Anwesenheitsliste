@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 type Page struct {
@@ -86,6 +87,7 @@ func LoginPageHandler(res http.ResponseWriter, req *http.Request) {
 		} else {
 			entry = append(entry, "Abgemeldet")
 		}
+		entry = append(entry,time.Now().Format("15:04"))
 		WriteJournal(entry)
 		templateDataLogin.Success = true
 		dataMap[access] = *templateDataLogin
