@@ -48,8 +48,8 @@ func GetFileContent(day string) string {
 func PrintHelp() bool {
 	fmt.Print("help\t\t\t\tZeigt diese Hilfe an\n")
 	fmt.Print("\tselect-day 21-12-2012\t\tWählt ein Datum für weitere Befehle aus\n")
-	fmt.Print("\tsearch-person max.mustermann\tSucht die Orte an dem sich eine Person am Tag aufgehalten hat\n")
-  fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
+	fmt.Print("\tsearch-person max mustermann\tSucht die Orte an dem sich eine Person am Tag aufgehalten hat\n")
+  	fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
 	fmt.Print("\tlist-days\t\t\tZeigt die Tage an, an denen eine Anwesenheit protokolliert wurde\n")
 	fmt.Print("\texport-list Ort\t\t\tExportiert die Anwesenheitsliste für einen Ort in eine CSV-Datei\n")
 	fmt.Print("\texit\t\t\t\tBeendet dieses Programm")
@@ -193,10 +193,10 @@ func SearchContact(name string) {
 	currentVisitors := make(map[string]map[string]time.Time)
 	contact := make(map[string]time.Duration)
 	suspect := struct {
-		n     string
+		n        string
 		location string
-	}{ name, "" }
-		files, err := ioutil.ReadDir("Journal")
+	}{name, ""}
+	files, err := ioutil.ReadDir("Journal")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -208,11 +208,11 @@ func SearchContact(name string) {
 		for _, row := range rows {
 			c := strings.Split(row, ";")
 
-			if c[2] == suspect.n{
+			if c[2] == suspect.n {
 				if c[3] == "Anmeldung" {
 					suspect.location = c[0]
 					isCheckedIn = true
-				}else {
+				} else {
 					isCheckedIn = false
 				}
 			}
@@ -221,40 +221,40 @@ func SearchContact(name string) {
 				currentVisitors[c[0]] = make(map[string]time.Time)
 			}
 			if _, ok := currentVisitors[c[0]][c[2]]; !ok {
-
-				t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+				
+				t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 				currentVisitors[c[0]][c[2]] = t
-			}else if c[3] == "Abmeldung"{
-				if  suspect.n != c[2] && isCheckedIn && suspect.location == c[0]{
+			} else if c[3] == "Abmeldung" {
+				if suspect.n != c[2] && isCheckedIn && suspect.location == c[0] {
 					//check if person checked in after suspect
 					if currentVisitors[c[0]][suspect.n].After(currentVisitors[c[0]][c[2]]) {
 						//person checkin time - checkoutime
 						if _, ok := contact[c[2]]; !ok {
-							t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+							t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 							contact[c[2]] = t.Sub(currentVisitors[c[0]][c[2]])
 						} else {
-							t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+							t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 							contact[c[2]] += t.Sub(currentVisitors[c[0]][c[2]])
 						}
-					//if Person checked in before suspect
-					//Person checkouttime - suspect checkintime
-					}else {
-						t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+						//if Person checked in before suspect
+						//Person checkouttime - suspect checkintime
+					} else {
+						t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 						contact[c[2]] = currentVisitors[c[0]][name].Sub(t)
 					}
-				}else if suspect.n == c[2] {
-					for key, value := range currentVisitors[c[0]]{
+				} else if suspect.n == c[2] {
+					for key, value := range currentVisitors[c[0]] {
 						if key != c[2] {
 							//check if visitor checked in after suspect
 							if currentVisitors[c[0]][key].After(currentVisitors[c[0]][c[2]]) {
-								t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+								t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 								if _, ok := contact[key]; !ok {
 									contact[key] = t.Sub(value)
 								} else {
 									contact[key] += t.Sub(value)
 								}
 							} else {
-								t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0] + c[4])
+								t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 								if _, ok := contact[key]; !ok {
 									contact[key] = t.Sub(currentVisitors[c[0]][c[2]])
 								} else {
@@ -264,15 +264,15 @@ func SearchContact(name string) {
 						}
 					}
 				}
-				delete(currentVisitors[c[0]],c[2] )
+				delete(currentVisitors[c[0]], c[2])
 			}
 		}
-		fmt.Println("\nKontakt dauer zu verdächtigen "+ suspect.n)
+		fmt.Println("\nKontakt dauer zu verdächtigen " + suspect.n)
 		for key, value := range contact {
 			fmt.Println(key + ": " + value.String())
 		}
 	}
-  
+}
 func ExecSelectDay(selectedDay string, parameter []string) bool {
 	if len(parameter) != 1 {
 		PrintHelp()
@@ -382,19 +382,6 @@ func main() {
 			name := parameter[0] + " " + parameter[1]
 			SearchContact(name)
 			break
-      
-    //Export contact list
-		case "contact-list":
-			if len(parameter) != 2 {
-				PrintHelp()
-				break
-			}
-
-			name := parameter[0] + " " + parameter[1]
-			SearchContact(name)
-			break
-
-  
       
 		// Stop the analyse program
 		case "exit":
