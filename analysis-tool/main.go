@@ -203,7 +203,7 @@ func SearchContact(name string) {
 
 	for _, file := range files {
 		content := GetFileContent(file.Name())
-		rows := strings.Split(content, "\n")
+		rows := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
 
 		for _, row := range rows {
 			c := strings.Split(row, ";")
@@ -221,7 +221,6 @@ func SearchContact(name string) {
 				currentVisitors[c[0]] = make(map[string]time.Time)
 			}
 			if _, ok := currentVisitors[c[0]][c[2]]; !ok {
-				
 				t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
 				currentVisitors[c[0]][c[2]] = t
 			} else if c[3] == "Abmeldung" {
