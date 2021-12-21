@@ -13,13 +13,7 @@ import (
 )
 
 // This function read the input of stdin
-func ReadStdIn() (string, []string) {
-	// Create new reader for stdin
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("-> ")
-
-	// Read input
-	text, _ := reader.ReadString('\n')
+func ReadStdIn(text string) (string, []string) {
 
 	// Trim LF
 	text = strings.Trim(text, "\n")
@@ -50,17 +44,19 @@ func GetFileContent(day string) string {
 }
 
 // This function print a help into a terminal
-func PrintHelp() {
 
+func PrintHelp() bool {
 	fmt.Print("help\t\t\t\tZeigt diese Hilfe an\n")
 	fmt.Print("\tselect-day 21-12-2012\t\tWählt ein Datum für weitere Befehle aus\n")
-	fmt.Print("\tsearch-person max mustermann\tSucht die Orte an dem sich eine Person am Tag aufgehalten hat\n")
-	fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
+	fmt.Print("\tsearch-person max.mustermann\tSucht die Orte an dem sich eine Person am Tag aufgehalten hat\n")
+  fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
 	fmt.Print("\tlist-days\t\t\tZeigt die Tage an, an denen eine Anwesenheit protokolliert wurde\n")
 	fmt.Print("\texport-list Ort\t\t\tExportiert die Anwesenheitsliste für einen Ort in eine CSV-Datei\n")
 	fmt.Print("\texit\t\t\t\tBeendet dieses Programm")
 
 	fmt.Print("\n")
+
+	return true
 }
 
 // This function list all days, which have a log file
@@ -125,6 +121,9 @@ func SearchPerson(parameter []string) bool {
 		}
 	}
 
+	if len(places) == 0 {
+		return false
+	}
 	return true
 }
 
@@ -273,6 +272,47 @@ func SearchContact(name string) {
 			fmt.Println(key + ": " + value.String())
 		}
 	}
+  
+func ExecSelectDay(selectedDay string, parameter []string) bool {
+	if len(parameter) != 1 {
+		PrintHelp()
+		return false
+	}
+	selectedDay = parameter[0]
+	fmt.Print("Der " + parameter[0] + " wurde ausgewählt\n")
+	return true
+}
+
+func ExecSearchPerson(selectedDay string, parameter []string) bool {
+	if len(parameter) != 2 {
+		PrintHelp()
+		return false
+	}
+
+	name := parameter[0] + " " + parameter[1]
+	parameter = []string{name, selectedDay}
+	SearchPerson(parameter)
+
+	return true
+}
+
+func ExecExportList(selectedDay string, parameter []string) bool {
+	if len(parameter) == 0 {
+		PrintHelp()
+		return false
+	}
+
+	place := ""
+	for i, part := range parameter {
+		place += part
+		if i < len(parameter)-1 {
+			place += " "
+		}
+	}
+
+	parameter = []string{place, selectedDay}
+	ExportList(parameter)
+	return true
 }
 
 func main() {
@@ -286,18 +326,19 @@ func main() {
 	for runCondition {
 
 		// Read stdin
-		cmd, parameter := ReadStdIn()
+
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("-> ")
+
+		// Read input
+		text, _ := reader.ReadString('\n')
+		cmd, parameter := ReadStdIn(text)
 
 		// Coordinate new command
 		switch cmd {
 		// Select a day
 		case "select-day":
-			if len(parameter) != 1 {
-				PrintHelp()
-				break
-			}
-			selectedDay = parameter[0]
-			fmt.Print("Der " + parameter[0] + " wurde ausgewählt\n")
+			ExecSelectDay(selectedDay, parameter)
 			break
 
 		// List all days in the journal directory
@@ -307,18 +348,13 @@ func main() {
 
 		// Search a person in a log file
 		case "search-person":
-			if len(parameter) != 2 {
-				PrintHelp()
-				break
-			}
-
-			name := parameter[0] + " " + parameter[1]
-			parameter := []string{name, selectedDay}
-			SearchPerson(parameter)
+			ExecSearchPerson(selectedDay, parameter)
 			break
 
 		// Export the attandance list into a file
 		case "export-list":
+
+      //TODO implement
 			if len(parameter) == 0 {
 				PrintHelp()
 				break
@@ -342,12 +378,24 @@ func main() {
 				PrintHelp()
 				break
 			}
+    
+			name := parameter[0] + " " + parameter[1]
+			SearchContact(name)
+			break
+      
+    //Export contact list
+		case "contact-list":
+			if len(parameter) != 2 {
+				PrintHelp()
+				break
+			}
 
 			name := parameter[0] + " " + parameter[1]
 			SearchContact(name)
 			break
 
-
+  
+      
 		// Stop the analyse program
 		case "exit":
 			fmt.Print("\tDas Programm wird beendet\n")
