@@ -50,7 +50,7 @@ func PrintHelp() bool {
 	fmt.Print("help\t\t\t\tZeigt diese Hilfe an\n")
 	fmt.Print("\tselect-day 21-12-2012\t\tWählt ein Datum für weitere Befehle aus\n")
 	fmt.Print("\tsearch-person max mustermann\tSucht die Orte an dem sich eine Person am Tag aufgehalten hat\n")
-  	fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
+	fmt.Print("\tcontact-list max mustermann\tZeigt die Kontakt Zeit die diese Person mit anderne hatte\n")
 	fmt.Print("\tlist-days\t\t\tZeigt die Tage an, an denen eine Anwesenheit protokolliert wurde\n")
 	fmt.Print("\texport-list Ort\t\t\tExportiert die Anwesenheitsliste für einen Ort in eine CSV-Datei\n")
 	fmt.Print("\texit\t\t\t\tBeendet dieses Programm")
@@ -93,7 +93,7 @@ func ListDays() bool {
 func SearchPerson(parameter []string) bool {
 	// Get content of a journal
 	content := GetFileContent(parameter[1])
-	if content == "no result" || content == "error"{
+	if content == "no result" || content == "error" {
 		return false
 	}
 
@@ -356,7 +356,6 @@ func main() {
 		// Export the attandance list into a file
 		case "export-list":
 
-      //TODO implement
 			if len(parameter) == 0 {
 				PrintHelp()
 				break
@@ -380,11 +379,11 @@ func main() {
 				PrintHelp()
 				break
 			}
-    
+
 			name := parameter[0] + " " + parameter[1]
 			fmt.Println(SearchContact(name))
 			break
-      
+
 		// Stop the analyse program
 		case "exit":
 			fmt.Print("\tDas Programm wird beendet\n")
@@ -399,5 +398,3 @@ func main() {
 
 	fmt.Print("### Go Anwesenheitsliste - Analyse Tool - end ###\n\n")
 }
-
-
