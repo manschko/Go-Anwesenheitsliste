@@ -1,5 +1,11 @@
 package main
 
+/*
+Matrikelnummern:
+3186523
+9008480
+6196929
+*/
 import (
 	"crypto/tls"
 	"net/http"
@@ -13,25 +19,24 @@ func TestToken(t *testing.T) {
 	locations, _ := ReadLocationList()
 	res := httptest.NewRecorder()
 	//test für error handling bei keinem übergebenen Token
-	req, err := http.NewRequest("GET", "https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "/", nil)
+	req, err := http.NewRequest("GET", "https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"/", nil)
 	LoginPageHandler(res, req)
 
-	if err != nil{
+	if err != nil {
 		t.Fatal(err)
 	}
 	if !templateDataLogin.Failed {
 		t.Errorf("Token ist vorhanden wurde aber nicht übergeben")
 	}
 	//test ob Tokens übetragen und erkannt wurden
-	req, err = http.NewRequest("GET","https://" + flags.Url + "" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, nil)
+	req, err = http.NewRequest("GET", "https://"+flags.Url+""+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, nil)
 	LoginPageHandler(res, req)
-	if err != nil{
+	if err != nil {
 		t.Fatal(err)
 	}
 	if templateDataLogin.Failed {
 		t.Errorf("Es konnten keine Token gefunden werden")
 	}
-
 
 }
 func TestForm(t *testing.T) {
@@ -44,7 +49,7 @@ func TestForm(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = client.PostForm("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit":{"true"}})
+	_, err = client.PostForm("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"true"}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,11 +79,11 @@ func TestForm(t *testing.T) {
 	}
 	//check ob Mapeintrag gelöscht wrid wenn Abgemeldet
 	locations, _ = ReadLocationList()
-	_, err = client.PostForm("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit":{"true"}})
+	_, err = client.PostForm("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"true"}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = client.PostForm("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit":{"false"}})
+	_, err = client.PostForm("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"false"}})
 	if err != nil {
 		t.Fatal(err)
 	}

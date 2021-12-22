@@ -1,5 +1,11 @@
 package main
 
+/*
+Matrikelnummern:
+3186523
+9008480
+6196929
+*/
 import (
 	"fmt"
 	"html/template"
@@ -87,7 +93,7 @@ func LoginPageHandler(res http.ResponseWriter, req *http.Request) {
 		} else {
 			entry = append(entry, "Abgemeldet")
 		}
-		entry = append(entry,time.Now().Format("15:04"))
+		entry = append(entry, time.Now().Format("15:04"))
 		WriteJournal(entry)
 		templateDataLogin.Success = true
 		dataMap[access] = *templateDataLogin

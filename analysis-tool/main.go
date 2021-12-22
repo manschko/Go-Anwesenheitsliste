@@ -1,5 +1,11 @@
 package main
 
+/*
+Matrikelnummern:
+3186523
+9008480
+6196929
+*/
 import (
 	"bufio"
 	"fmt"

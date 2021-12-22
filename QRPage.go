@@ -1,5 +1,11 @@
 package main
 
+/*
+Matrikelnummern:
+3186523
+9008480
+6196929
+*/
 import (
 	"fmt"
 	"github.com/gorilla/mux"
@@ -12,14 +18,14 @@ import (
 
 type TemplateDataQR struct {
 	Locations []string
-	Success bool
+	Success   bool
 }
+
 var locations, check = ReadLocationList()
 var locationNameList []string
 
-func createQRWebServer(port int)  *http.Server{
+func createQRWebServer(port int) *http.Server {
 	m := mux.NewRouter()
-
 
 	// list of location names
 
@@ -34,20 +40,21 @@ func createQRWebServer(port int)  *http.Server{
 		m.HandleFunc("/{location}", qrPageHandler)
 	}
 	//fileserver for gr code single page
-	fs := http.FileServer( http.Dir("./PageTemplates"))
+	fs := http.FileServer(http.Dir("./PageTemplates"))
 	m.PathPrefix("/{location}").Handler(http.StripPrefix("/PageTemplates", fs))
-	server := http.Server {
-		Addr: fmt.Sprintf(":%v", port),
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%v", port),
 		Handler: m,
 	}
 	return &server
 }
+
 //generate qr code as png and save it in PageTemplates
 func executeQr(location Location) {
 
-	qrcode.WriteFile("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "/?location=" + location.AccessToken + "&access=" + location.CurrentToken, qrcode.Medium, 256, "PageTemplates/qr.png")
+	qrcode.WriteFile("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"/?location="+location.AccessToken+"&access="+location.CurrentToken, qrcode.Medium, 256, "PageTemplates/qr.png")
 }
-func qrPageHandler( res http.ResponseWriter, req *http.Request) {
+func qrPageHandler(res http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	for _, location := range locations {
 		//check if param is in xml
@@ -57,8 +64,10 @@ func qrPageHandler( res http.ResponseWriter, req *http.Request) {
 			tmpl := template.Must(template.ParseFiles(path))
 			//generate qr code
 			executeQr(location)
-			tmpl.Execute(res, struct{LocationName string
-				Valid int}{location.Name, flags.TokenValidity})
+			tmpl.Execute(res, struct {
+				LocationName string
+				Valid        int
+			}{location.Name, flags.TokenValidity})
 			return
 		}
 	}
@@ -67,11 +76,11 @@ func qrPageHandler( res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func selectionPageHandler( res http.ResponseWriter, req *http.Request) {
+func selectionPageHandler(res http.ResponseWriter, req *http.Request) {
 	path := filepath.FromSlash("./PageTemplates/qr.html")
 	tmpl := template.Must(template.ParseFiles(path))
-	if req.Method != http.MethodPost{
-		tmpl.Execute(res, TemplateDataQR{locationNameList,false})
+	if req.Method != http.MethodPost {
+		tmpl.Execute(res, TemplateDataQR{locationNameList, false})
 		return
 	}
 	//get selected location
@@ -81,7 +90,7 @@ func selectionPageHandler( res http.ResponseWriter, req *http.Request) {
 		//check if selected location is in xml
 		if selectedLocation == location.Name {
 			//add accesstoken of selected location to url
-			http.Redirect(res, req, "/" + location.AccessToken, http.StatusSeeOther)
+			http.Redirect(res, req, "/"+location.AccessToken, http.StatusSeeOther)
 		}
 	}
 }
