@@ -31,9 +31,10 @@ func ReadStdIn(text string) (string, []string) {
 // This function read the complete content of a journal
 func GetFileContent(day string) string {
 	// Read a journal file
-	byteContent, err := os.ReadFile("Journal/" + day)
+	byteContent, err := os.ReadFile("Journal/" + day + ".txt")
 
 	if err != nil {
+		fmt.Println(err)
 		return "error"
 	}
 
@@ -92,11 +93,12 @@ func ListDays() bool {
 func SearchPerson(parameter []string) bool {
 	// Get content of a journal
 	content := GetFileContent(parameter[1])
-	if content == "no result" {
+	if content == "no result" || content == "error"{
 		return false
 	}
 
-	rows := strings.Split(content, "\n")
+	rows := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
+	rows = rows[:len(rows)-1]
 	var places []string
 
 	// Print data of a person
@@ -104,7 +106,7 @@ func SearchPerson(parameter []string) bool {
 	fmt.Print("\tOrte:\n")
 	for _, row := range rows {
 		fields := strings.Split(row, ";")
-		if fields[0] != parameter[0] {
+		if fields[2] != parameter[0] {
 			continue
 		}
 
@@ -148,11 +150,8 @@ func ExportList(parameter []string) bool {
 
 	for _, row := range rows {
 		fields := strings.Split(row, ";")
-		if len(fields) != 3 {
-			continue
-		}
 
-		if fields[1] != parameter[0] {
+		if fields[0] != parameter[0] {
 			continue
 		}
 
@@ -164,11 +163,12 @@ func ExportList(parameter []string) bool {
 		}
 
 		if !containPerson {
-			people = append(people, fields[0])
-			fmt.Print("\t" + strconv.Itoa(index) + "\t| " + fields[0] + "\n")
+			people = append(people, fields[2])
+			fmt.Print("\t" + strconv.Itoa(index) + "\t| " + fields[2] + "\n")
 
 			// Write data set into file
-			writer.WriteString(strconv.Itoa(index) + ";" + fields[0] + "\n")
+			writer.WriteString(strconv.Itoa(index) + ";" + fields[2] + "\n")
+			index++
 		}
 	}
 
@@ -188,7 +188,8 @@ func ExportList(parameter []string) bool {
 	return true
 }
 
-func SearchContact(name string) {
+func SearchContact(name string) string {
+	s := ""
 	isCheckedIn := false
 	currentVisitors := make(map[string]map[string]time.Time)
 	contact := make(map[string]time.Duration)
@@ -196,15 +197,16 @@ func SearchContact(name string) {
 		n        string
 		location string
 	}{name, ""}
+	fmt.Println(os.Getwd())
 	files, err := ioutil.ReadDir("Journal")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, file := range files {
-		content := GetFileContent(file.Name())
+		content := GetFileContent(strings.Split(file.Name(), ".")[0])
 		rows := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
-
+		rows = rows[:len(rows)-1]
 		for _, row := range rows {
 			c := strings.Split(row, ";")
 
@@ -239,7 +241,7 @@ func SearchContact(name string) {
 						//Person checkouttime - suspect checkintime
 					} else {
 						t, _ := time.Parse("01-02-200615:04", strings.Split(file.Name(), ".")[0]+c[4])
-						contact[c[2]] = currentVisitors[c[0]][name].Sub(t)
+						contact[c[2]] = t.Sub(currentVisitors[c[0]][name])
 					}
 				} else if suspect.n == c[2] {
 					for key, value := range currentVisitors[c[0]] {
@@ -266,11 +268,12 @@ func SearchContact(name string) {
 				delete(currentVisitors[c[0]], c[2])
 			}
 		}
-		fmt.Println("\nKontakt dauer zu verdächtigen " + suspect.n)
+		s = "\nKontakt dauer zu verdächtigen " + suspect.n
 		for key, value := range contact {
-			fmt.Println(key + ": " + value.String())
+			s += "\n" + key + ": " + value.String()
 		}
 	}
+	return s
 }
 func ExecSelectDay(selectedDay string, parameter []string) bool {
 	if len(parameter) != 1 {
@@ -296,7 +299,7 @@ func ExecSearchPerson(selectedDay string, parameter []string) bool {
 }
 
 func ExecExportList(selectedDay string, parameter []string) bool {
-	if len(parameter) == 0 {
+	if len(parameter) != 2 {
 		PrintHelp()
 		return false
 	}
@@ -379,7 +382,7 @@ func main() {
 			}
     
 			name := parameter[0] + " " + parameter[1]
-			SearchContact(name)
+			fmt.Println(SearchContact(name))
 			break
       
 		// Stop the analyse program
