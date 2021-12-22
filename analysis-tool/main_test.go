@@ -49,7 +49,7 @@ func TestListDays(t *testing.T) {
 
 func TestSearchPerson(t *testing.T) {
 	var parameter []string
-	if SearchPerson([]string{"",""}){
+	if SearchPerson([]string{"", ""}) {
 		t.Error("Unexpected parameters")
 	}
 	parameter = append(parameter, "test2 test")
@@ -141,13 +141,13 @@ func TestContactList(t *testing.T) {
 	rows := strings.Split(output, "\n")
 	rows = rows[2:]
 
-	expected := []string{"test3 test: 3h56m0s", "test2 test: 3h58m0s", "test4 test: 4h0m0s" ,"test5 test: 4h0m0s", "test7 test: 3h54m0s", "test6 test: 3h54m0s", "test9 test: 2h2m0s","test8 test: 2h1m0s"}
+	expected := []string{"test3 test: 3h56m0s", "test2 test: 3h58m0s", "test4 test: 4h0m0s", "test5 test: 4h0m0s", "test7 test: 3h54m0s", "test6 test: 3h54m0s", "test9 test: 2h2m0s", "test8 test: 2h1m0s"}
 	//sort both slices to get two equal slices
 	sort.Strings(expected)
 	sort.Strings(rows)
 	//check if both slices equal length
 	if len(rows) != len(expected) {
-		t.Error("output length: " + strconv.Itoa(len(rows)) +" is not the same as expected: " + strconv.Itoa(len(expected)))
+		t.Error("output length: " + strconv.Itoa(len(rows)) + " is not the same as expected: " + strconv.Itoa(len(expected)))
 	}
 
 	//check for differences in slice

@@ -6,18 +6,25 @@ import (
 )
 
 //Überschreibe Main test Funktion um Funktionen vor den tests auszuführen
+//TODO replace journalTest with Journal
 func TestMain(m *testing.M) {
 	setup()
-	os.Exit(m.Run())
+	code := m.Run()
+	shutdown()
+	os.Exit(code)
 }
 
 func setup() {
 	ConfigFlag()
 	ConfigWebServer()
+	os.Rename("Journal", "JournalOld")
+	os.Rename("JournalTest", "Journal")
 }
 
-
-
+func shutdown() {
+	os.Rename("Journal", "JournalTest")
+	os.Rename("JournalOld", "Journal")
+}
 
 func TestWebServerAndFlags(t *testing.T) {
 

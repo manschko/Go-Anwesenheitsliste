@@ -1,0 +1,5 @@
+Mosbach;test;test2 test;Anmeldung;01:32
+Mosbach;test;test2 test;Abmeldung;03:32
+Bad Mergendheim;test;test2 test;Anmeldung;01:32
+Bad Mergendheim;test;test2 test;Abmeldung;03:32
+Bad Mergendheim;test;test3 test;Abmeldung;03:32
