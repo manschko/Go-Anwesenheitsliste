@@ -15,6 +15,23 @@ import (
 	"testing"
 )
 
+func TestMain(m *testing.M) {
+	setup()
+	code := m.Run()
+	shutdown()
+	os.Exit(code)
+}
+
+func setup() {
+	os.Rename("Journal", "JournalOld")
+	os.Rename("JournalTest", "Journal")
+}
+
+func shutdown() {
+	os.Rename("Journal", "JournalTest")
+	os.Rename("JournalOld", "Journal")
+}
+
 func TestReadStdIn(t *testing.T) {
 	command, parameter := ReadStdIn("help")
 	if command != "help" || len(parameter) != 0 {
@@ -139,9 +156,6 @@ func TestExecExportList(t *testing.T) {
 	}
 }
 
-func TestMain(m *testing.M) {
-	os.Exit(m.Run())
-}
 func TestContactList(t *testing.T) {
 	output := SearchContact("test test")
 	rows := strings.Split(output, "\n")

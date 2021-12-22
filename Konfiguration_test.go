@@ -22,15 +22,10 @@ func TestMain(m *testing.M) {
 func setup() {
 	ConfigFlag()
 	ConfigWebServer()
-	os.Rename("Journal", "JournalOld")
-	os.Rename("JournalTest", "Journal")
 }
 
 func shutdown() {
-	os.Rename("Journal", "JournalTest")
-	os.Rename("JournalOld", "Journal")
 }
-
 func TestWebServerAndFlags(t *testing.T) {
 
 	//test for default Flags
