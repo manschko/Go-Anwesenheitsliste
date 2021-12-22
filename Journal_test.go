@@ -24,7 +24,7 @@ func TestWriteJournal(t *testing.T) {
 	}
 	os.Rename("JournalTemp", "Journal")
 	err = WriteJournal(entry)
-	file, err := os.OpenFile("Journal/"+time.Now().Format("01-02-2006")+".txt", os.O_RDONLY, 0660)
+	file, err := os.OpenFile("./Journal/"+time.Now().Format("01-02-2006")+".txt", os.O_RDONLY, 0660)
 	//check ob auf schreiben der Datei geklappt hat
 	if err != nil {
 		t.Errorf("error beim öffnen der Datei: %d", err)
