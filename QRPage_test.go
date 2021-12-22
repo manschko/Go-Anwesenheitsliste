@@ -1,15 +1,19 @@
 package main
 
-/*
- QRPage_test.go:50: Post "https://localhost:8080/": dial tcp 127.0.0.1:8080: connect: connection refused
- Lokal funktioniert der Test, siehe PassedTests/TestQRSelectionPage.JPG bekomme aber auf der CLI connection refused
+import (
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"testing"
+)
 
 func TestQRSelectionPage(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(selectionPageHandler))
 	locations, _ := ReadLocationList()
-	res := httptest.NewRecorder()
 	//test if webpage is reachable
-	req, err := http.NewRequest("GET", "https://"+flags.Url+":"+strconv.Itoa(flags.Port2)+"/", nil)
-	selectionPageHandler(res, req)
+	_, err := http.Get(ts.URL)
 
 	if err != nil {
 		t.Fatal(err)
@@ -18,66 +22,61 @@ func TestQRSelectionPage(t *testing.T) {
 
 	data := url.Values{}
 	data.Set("location", locations[0].Name)
-	req, err = http.NewRequest("POST", "https://"+flags.Url+":"+strconv.Itoa(flags.Port2)+"/", strings.NewReader(data.Encode()))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	res, err := http.PostForm(ts.URL, data)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tr := &http.Transport{
+	/*tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
 	response, err := client.Do(req)
 
+	res, err := http.Get(ts.Url)
+
 	if err != nil {
 		t.Fatal(err)
-	}
+	}*/
 
-	if response.StatusCode != 200 || response.Request.URL.String() == "https://"+flags.Url+":"+strconv.Itoa(flags.Port2)+"/" {
+	if res.StatusCode != 200 || res.Request.URL.String() == ts.URL {
 		t.Errorf("Redirect to QR Page did not work")
 	}
 
 }
 
 func TestQRPage(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(selectionPageHandler))
 	//check of redirect with wrong parameters
 	locations, _ := ReadLocationList()
-	req, err := http.NewRequest("GET", "https://"+flags.Url+":"+strconv.Itoa(flags.Port2)+"/test", nil)
+	res, err := http.Get(ts.URL + "/test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	tr := &http.Transport{
+	/*tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
+
 	client := &http.Client{Transport: tr}
 	response, err := client.Do(req)
-
+	*/
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if response.StatusCode != 200 || response.Request.URL.String() != "https://"+flags.Url+":"+strconv.Itoa(flags.Port2)+"/" {
+	//test redirect
+	if res.StatusCode != 200 || res.Request.URL.String() != ts.URL+"/" {
 		t.Errorf("Redirect with wrong Accescode did not work")
 	}
 
 	//check if QR code is getting generated
 	os.Remove("PageTemplates/qr.png")
 
-	req, err = http.NewRequest("GET", "https://"+flags.Url+":"+strconv.Itoa(flags.Port2)+"/"+locations[0].AccessToken, nil)
+	_, err = http.Get(ts.URL + "/" + locations[0].AccessToken)
 
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	response, err = client.Do(req)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	fmt.Println()
 
 	_, err = os.Stat("PageTemplates/qr.png")
 	errors.Is(err, os.ErrNotExist)
@@ -85,4 +84,3 @@ func TestQRPage(t *testing.T) {
 		t.Errorf("QR Code was not properly generated")
 	}
 }
-*/

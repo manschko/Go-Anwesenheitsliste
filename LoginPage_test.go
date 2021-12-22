@@ -7,18 +7,18 @@ Matrikelnummern:
 6196929
 */
 import (
+	"crypto/tls"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
+	"net/url"
 	"testing"
 )
 
 func TestToken(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(LoginPageHandler))
 	locations, _ := ReadLocationList()
-	res := httptest.NewRecorder()
 	//test für error handling bei keinem übergebenen Token
-	req, err := http.NewRequest("GET", "https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"/", nil)
-	LoginPageHandler(res, req)
+	_, err := http.Get(ts.URL)
 
 	if err != nil {
 		t.Fatal(err)
@@ -27,8 +27,7 @@ func TestToken(t *testing.T) {
 		t.Errorf("Token ist vorhanden wurde aber nicht übergeben")
 	}
 	//test ob Tokens übetragen und erkannt wurden
-	req, err = http.NewRequest("GET", "https://"+flags.Url+""+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, nil)
-	LoginPageHandler(res, req)
+	_, err = http.Get(ts.URL + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,20 +37,18 @@ func TestToken(t *testing.T) {
 
 }
 
-/*
-LoginPage_test.go:50: Get "https://localhost:8081?location=rg&access=3890372420546292004": dial tcp 127.0.0.1:8081: connect: connection refused
-Lokal funktioniert der Test, siehe PassedTests/TestForm.JPG bekomme aber auf der CLI connection refused
 func TestForm(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(LoginPageHandler))
 	locations, _ := ReadLocationList()
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
-	_, err := client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
+	_, err := client.Get(ts.URL + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = client.PostForm("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"true"}})
+	_, err = client.PostForm(ts.URL+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"true"}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +59,7 @@ func TestForm(t *testing.T) {
 		t.Errorf("Fehler bei dem übertragen von Formdaten erwartet \"test\" für die Adresse, übertragen: %s", loginData.Adresse)
 	}
 	//check ob from Daten gespeichert wurden
-	_, err = client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
+	_, err = client.Get(ts.URL + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -72,7 +69,7 @@ func TestForm(t *testing.T) {
 	//check ob Mapeintrag gelöscht wird wenn Token ungültig
 	RunChangeTokenThread()
 	RunChangeTokenThread()
-	_, err = client.Get("https://" + flags.Url + ":" + strconv.Itoa(flags.Port1) + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
+	_, err = client.Get(ts.URL + "?location=" + locations[0].AccessToken + "&access=" + locations[0].CurrentToken)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,15 +78,15 @@ func TestForm(t *testing.T) {
 	}
 	//check ob Mapeintrag gelöscht wrid wenn Abgemeldet
 	locations, _ = ReadLocationList()
-	_, err = client.PostForm("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"true"}})
+	_, err = client.PostForm(ts.URL+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"true"}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = client.PostForm("https://"+flags.Url+":"+strconv.Itoa(flags.Port1)+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"false"}})
+	_, err = client.PostForm(ts.URL+"?location="+locations[0].AccessToken+"&access="+locations[0].CurrentToken, url.Values{"adresse": {"test"}, "name": {"name"}, "submit": {"false"}})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(dataMap) != 0 {
 		t.Errorf("Eintrag wurde nicht aus der Map gelöscht nach dem Abmelden")
 	}
-}*/
+}

@@ -1,8 +1,18 @@
 package main
 
+import (
+	"bufio"
+	"os"
+	"strings"
+	"testing"
+	"time"
+)
+
 /*
+TODO Tempfile erstellen
 Journal_test.go:23: open Journal/12-22-2021.txt: no such file or directory
 Fehler lässt sich nicht lokal reproduzieren. Lokal laufen die Tests siehe PassedTests/TestWriteJournal.JPG
+*/
 func TestWriteJournal(t *testing.T) {
 	entry := []string{"testort", "testadresse", "test name", "Anmeldung", "01:20"}
 	os.Rename("Journal", "JournalTemp")
@@ -36,4 +46,3 @@ func TestWriteJournal(t *testing.T) {
 		}
 	}
 }
-*/
