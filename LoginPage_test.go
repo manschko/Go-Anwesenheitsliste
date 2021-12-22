@@ -40,7 +40,7 @@ func TestToken(t *testing.T) {
 
 /*
 LoginPage_test.go:50: Get "https://localhost:8081?location=rg&access=3890372420546292004": dial tcp 127.0.0.1:8081: connect: connection refused
-Local funktioniert der Test bekomme aber auf der CLI connection refused
+Lokal funktioniert der Test, siehe PassedTests/TestForm.JPG bekomme aber auf der CLI connection refused
 func TestForm(t *testing.T) {
 	locations, _ := ReadLocationList()
 	tr := &http.Transport{
