@@ -1,0 +1,7 @@
+testort;testadresse;test name;Anmeldung;01:20
+testort;testadresse;test name;Anmeldung;01:20
+Mosbach;test;name;Angemeldet;01:48
+Mosbach;test;name;Angemeldet;01:48
+Mosbach;test;name;Abgemeldet;01:48
+Bad Mergendheim;Heilbronn;Manuel;Angemeldet;01:56
+Bad Mergendheim;Heilbronn;Manuel;Abgemeldet;01:56
